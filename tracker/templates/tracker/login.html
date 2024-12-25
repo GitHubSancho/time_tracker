@@ -1,0 +1,52 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}登录 - 你好啊！{% endblock %}
+
+{% block content %}
+<div id="layoutAuthentication">
+    <div id="layoutAuthentication_content">
+        <main>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="card shadow-lg border-0 rounded-lg mt-5">
+                            <div class="card-header"><h3 class="text-center font-weight-light my-4">登录</h3></div>
+                            <div class="card-body">
+                                {% if messages %}
+                                    <div class="alert alert-success" role="alert">
+                                        {% for message in messages %}
+                                            {{ message }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <form method="post" action="{% url 'login' %}" autocomplete="on">
+                                    {% csrf_token %}
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="inputUsername" type="text" name="username" placeholder="用户名" required autocomplete="username" value="{{ initial_data.username }}" />
+                                        <label for="inputUsername">用户名</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="inputPassword" type="password" name="password" placeholder="密码" required autocomplete="current-password" />
+                                        <label for="inputPassword">密码</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" id="inputRememberPassword" type="checkbox" name="remember" value="true" />
+                                        <label class="form-check-label" for="inputRememberPassword">记住我</label>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                        <a class="small" href="password.html">忘记密码？</a>
+                                        <button class="btn btn-primary" type="submit">登录</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-center py-3">
+                                <div class="small"><a href="{% url 'signup' %}">需要账户？注册！</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

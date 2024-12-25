@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>记录时间</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>记录时间</h1>
+        <form id="time-record-form" method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.start_datetime.label_tag }} {{ form.start_datetime }}
+            </div>
+            <div class="form-group">
+                {{ form.end_datetime.label_tag }} {{ form.end_datetime }}
+            </div>
+            <div class="form-group">
+                {{ form.project.label_tag }} {{ form.project }}
+            </div>
+            <div class="form-group">
+                {{ form.category.label_tag }} {{ form.category }}
+            </div>
+            <div class="form-group">
+                {{ form.notes.label_tag }} {{ form.notes }}
+            </div>
+            <button type="submit" class="btn btn-primary">提交</button>
+            <div id="messages" class="mt-3"></div>
+        </form>
+
+        <h2>最新十条记录</h2>
+        <div id="records-list">
+            {% include 'tracker/partials/records_list.html' %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#time-record-form').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '{% url "record_time" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('#messages').html('<div class="alert alert-success">' + response.message + '</div>');
+                            $('#records-list').html(response.records_html);
+                        } else {
+                            var errorsHtml = '<div class="alert alert-danger">';
+                            $.each(response.errors, function(key, value) {
+                                errorsHtml += value[0] + '<br>';
+                            });
+                            errorsHtml += '</div>';
+                            $('#messages').html(errorsHtml);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#messages').html('<div class="alert alert-danger">发生错误，请重试。</div>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

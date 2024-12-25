@@ -1,0 +1,127 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}注册 - 在这里！{% endblock %}
+
+{% block content %}
+<div id="layoutAuthentication">
+    <div id="layoutAuthentication_content">
+        <main>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="card shadow-lg border-0 rounded-lg mt-5">
+                            <div class="card-header"><h3 class="text-center font-weight-light my-4">创建账户</h3></div>
+                            <div class="card-body">
+                                <div id="messages">
+                                    {% if message %}
+                                        <div class="alert alert-success">{{ message }}</div>
+                                    {% endif %}
+                                    {% if errors %}
+                                        <div class="alert alert-danger">
+                                            {% for field, error_list in errors.items %}
+                                                <strong>{{ field }}:</strong><br>
+                                                {% for error in error_list %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <form id="signupForm" method="post" action="{% url 'signup' %}">
+                                    {% csrf_token %}
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="inputUsername" type="text" name="username" placeholder="请输入用户名" value="{{ form.username.value|default_if_none:'' }}" required />
+                                        <label for="inputUsername">用户名 | 允许字母、数字，且以字母开头，6~10位字符</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="inputInviteCode" type="text" name="invite_code" placeholder="请输入邀请码" value="{{ form.invite_code.value|default_if_none:'' }}" required />
+                                        <label for="inputInviteCode">邀请码</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="inputPassword" type="password" name="password1" placeholder="创建密码" value="{{ form.password1.value|default_if_none:'' }}" required />
+                                        <label for="inputPassword">密码 | 允许字母和数字，8~20位字符</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="inputPasswordConfirm" type="password" name="password2" placeholder="确认密码" value="{{ form.password2.value|default_if_none:'' }}" required />
+                                        <label for="inputPasswordConfirm">确认密码</label>
+                                    </div>
+                                    <div class="mt-4 mb-0">
+                                        <div class="d-grid"><button class="btn btn-primary btn-block" type="submit">创建账户</button></div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-center py-3">
+                                <div class="small"><a href="{% url 'login' %}">已有账户？去登录</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // 清除消息内容
+        $('#messages').empty();
+
+        // 获取 CSRF 令牌
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // 检查是否是 CSRF 令牌
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // 设置 AJAX 请求的头部
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $('#signupForm').on('submit', function(event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $('#messages').html('<div class="alert alert-success">' + response.message + '</div>');
+                    } else {
+                        var errorMessages = '';
+                        $.each(response.errors, function(field, errors) {
+                            errorMessages += '<strong>' + field + ':</strong><br>';
+                            $.each(errors, function(index, message) {
+                                errorMessages += '<p>' + message + '</p>';
+                            });
+                        });
+                        $('#messages').html('<div class="alert alert-danger">' + errorMessages + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#messages').html('<div class="alert alert-danger">请求失败，请稍后再试。</div>');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
