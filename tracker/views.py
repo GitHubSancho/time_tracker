@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import SignUpForm
 from .forms import TimeRecordForm
 from .models import TimeRecord, User  # 导入 TimeRecord 模型
@@ -108,4 +108,94 @@ def signup_view(request):
 
 def home_view(request):
     """ 首页 """
-    return render(request, 'tracker/home.html')
+    context = {
+        'cards': [{
+            'title': '卡片1',
+            'color': 'primary',
+            'url': '#'
+        }, {
+            'title': '卡片2',
+            'color': 'warning',
+            'url': '#'
+        }, {
+            'title': '卡片3',
+            'color': 'success',
+            'url': '#'
+        }, {
+            'title': '卡片4',
+            'color': 'danger',
+            'url': '#'
+        }],
+        'table_data': [{
+            'name': '张三',
+            'position': '工程师',
+            'office': '北京',
+            'age': 30,
+            'start_date': '2020-01-01',
+            'salary': '$10000'
+        },
+                       # 添加更多示例数据...
+                      ]
+    }
+
+    return render(request, 'tracker/home.html', context)
+
+
+def dashboard_view(request):
+    """ 仪表盘视图 """
+    return render(request, 'tracker/dashboard.html')  # 假设你有一个 dashboard.html 模板
+
+
+def settings_view(request):
+    """ 仪表盘视图 """
+    return render(request, 'tracker/settings.html')  # 假设你有一个 dashboard.html 模板
+
+
+def activity_log_view(request):
+    """ 仪表盘视图 """
+    return render(request, 'tracker/activity_log.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+def static_navigation_view(request):
+    """ 静态导航视图 """
+    return render(request, 'tracker/static_navigation.html')
+
+
+def light_sidenav_view(request):
+    """ 静态导航视图 """
+    return render(request, 'tracker/light_sidenav.html')
+
+
+def password_reset_view(request):
+    """ 密码重置视图 """
+    return render(request, 'tracker/password_reset.html')
+
+
+def a401_view(request):
+    """ 401 视图 """
+    return render(request, 'tracker/401.html', status=401)
+
+
+def a404_view(request):
+    """ 404 视图 """
+    return render(request, 'tracker/404.html', status=404)
+
+
+def a500_view(request):
+    """ 500 视图 """
+    return render(request, 'tracker/500.html', status=500)
+
+
+def charts_view(request):
+    """ 图表视图 """
+    return render(request, 'tracker/charts.html')
+
+
+def tables_view(request):
+    """ 表格视图 """
+    return render(request, 'tracker/tables.html')

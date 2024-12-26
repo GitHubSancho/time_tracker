@@ -1,0 +1,85 @@
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">仪表盘</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">仪表盘</li>
+            </ol>
+            <div class="row">
+                {% for card in cards %}
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-{{ card.color }} text-white mb-4">
+                            <div class="card-body">{{ card.title }}</div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-white stretched-link" href="{{ card.url }}">查看详情</a>
+                                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-area me-1"></i>
+                            面积图示例
+                        </div>
+                        <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            柱状图示例
+                        </div>
+                        <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    数据表示例
+                </div>
+                <div class="card-body">
+                    <table id="datatablesSimple">
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>职位</th>
+                                <th>办公室</th>
+                                <th>年龄</th>
+                                <th>入职日期</th>
+                                <th>薪水</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>姓名</th>
+                                <th>职位</th>
+                                <th>办公室</th>
+                                <th>年龄</th>
+                                <th>入职日期</th>
+                                <th>薪水</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            {% for row in table_data %}
+                                <tr>
+                                    <td>{{ row.name }}</td>
+                                    <td>{{ row.position }}</td>
+                                    <td>{{ row.office }}</td>
+                                    <td>{{ row.age }}</td>
+                                    <td>{{ row.start_date }}</td>
+                                    <td>{{ row.salary }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
